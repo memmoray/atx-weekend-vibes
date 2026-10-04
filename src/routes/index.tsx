@@ -175,6 +175,8 @@ function Index() {
   const [aiStops, setAiStops] = useState<Partial<Record<Vibe["id"], Stop[]>>>({});
   const [loading, setLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [customText, setCustomText] = useState("");
+  const [custom, setCustom] = useState<{ label: string; stops: Stop[] } | null>(null);
   const requestId = useRef(0);
 
   useEffect(() => {
@@ -183,7 +185,9 @@ function Index() {
   }, []);
 
   const baseVibe = VIBES.find((v) => v.id === vibeId) as Vibe;
-  const vibe: Vibe = { ...baseVibe, stops: aiStops[vibeId] ?? baseVibe.stops };
+  const vibe: Vibe = custom
+    ? { ...baseVibe, label: "Custom", tagline: "made for you", stops: custom.stops }
+    : { ...baseVibe, stops: aiStops[vibeId] ?? baseVibe.stops };
   const selectedStops = vibe.stops.filter((s) => !excluded.includes(s.slot));
   const total = selectedStops.reduce((sum, stop) => sum + stop.price, 0);
 
@@ -208,7 +212,35 @@ function Index() {
       const json = await res.json();
       if (myId !== requestId.current) return;
       if (!res.ok) throw new Error(json.error ?? "Couldn't generate an itinerary.");
+      setCustom(null);
       setAiStops((prev) => ({ ...prev, [id]: json.stops as Stop[] }));
+      setExcluded([]);
+      setPaid(false);
+    } catch (e) {
+      if (myId === requestId.current)
+        setAiError(e instanceof Error ? e.message : "Couldn't generate an itinerary.");
+    } finally {
+      if (myId === requestId.current) setLoading(false);
+    }
+  };
+
+  const generateCustom = async () => {
+    const text = customText.trim();
+    if (text.length < 2) return;
+    const myId = ++requestId.current;
+    setLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/generate-itinerary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ custom: text }),
+      });
+      const json = await res.json();
+      if (myId !== requestId.current) return;
+      if (!res.ok) throw new Error(json.error ?? "Couldn't generate an itinerary.");
+      setCustom({ label: text, stops: json.stops as Stop[] });
+      setCustomText("");
       setExcluded([]);
       setPaid(false);
     } catch (e) {
@@ -221,6 +253,7 @@ function Index() {
 
   const swapVibe = (id: Vibe["id"]) => {
     setVibeId(id);
+    setCustom(null);
     setPaid(false);
     setExcluded([]);
     void generate(id);
@@ -265,9 +298,25 @@ function Index() {
 
         {/* Vibe selector */}
         <div className="glass mt-5 rounded-2xl p-3">
-          <p className="px-1 pb-2 text-[10px] font-medium tracking-[0.2em] text-ink-soft/70 uppercase">
-            Choose your vibe
-          </p>
+          <div className="flex items-center justify-between px-1 pb-2">
+            <p className="text-[10px] font-medium tracking-[0.2em] text-ink-soft/70 uppercase">
+              Choose your vibe
+            </p>
+            <button
+              type="button"
+              onClick={() => void generate(vibeId)}
+              disabled={loading}
+              aria-label="Shuffle — generate a new pass for this vibe"
+              className={`glass-dim flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium text-ink transition-all duration-200 hover:glass ${
+                loading ? "opacity-50" : ""
+              }`}
+            >
+              <span aria-hidden="true" className={loading ? "animate-spin" : ""}>
+                ⟳
+              </span>
+              {loading ? "Shuffling" : "Shuffle"}
+            </button>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             {VIBES.map((v) => {
               const active = v.id === vibeId;
@@ -300,7 +349,34 @@ function Index() {
               );
             })}
           </div>
-        </div>
+
+          {/* Custom vibe input */}
+          <form
+            className="glass-dim mt-2 flex items-center gap-2 rounded-2xl p-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void generateCustom();
+            }}
+          >
+            <input
+              type="text"
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+              placeholder="Custom Vibe (e.g., Speakeasies & Dessert or Vintage Shopping)"
+              maxLength={60}
+              aria-label="Custom vibe"
+              className="min-w-0 flex-1 bg-transparent px-1.5 text-[13px] text-ink placeholder:text-ink-soft/60 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={loading || customText.trim().length < 2}
+              className={`shrink-0 rounded-full bg-ink px-3.5 py-2 font-display text-[12px] font-semibold tracking-tight text-cream ring-1 ring-black/10 transition-opacity ${
+                loading || customText.trim().length < 2 ? "opacity-40" : ""
+              }`}
+            >
+              Mix it
+            </button>
+          </form>
 
         {/* Itinerary card */}
         <main
