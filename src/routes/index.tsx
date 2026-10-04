@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import chillPhoto from "../assets/chill-vibe.jpg";
+import wildPhoto from "../assets/wild-vibe.jpg";
+import socialPhotoAsset from "../assets/social-vibe.jpg.asset.json";
+
+const socialPhoto = socialPhotoAsset.url;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,6 +45,7 @@ type Vibe = {
   id: "chill" | "social" | "wild";
   label: string;
   tagline: string;
+  photo: string;
   stops: Stop[];
 };
 
@@ -48,6 +54,7 @@ const VIBES: Vibe[] = [
     id: "chill",
     label: "Chill",
     tagline: "Slow mornings, soft landings",
+    photo: chillPhoto,
     stops: [
       {
         slot: "Morning",
@@ -76,6 +83,7 @@ const VIBES: Vibe[] = [
     id: "social",
     label: "Social",
     tagline: "Patios, music, people",
+    photo: socialPhoto,
     stops: [
       {
         slot: "Morning",
@@ -104,6 +112,7 @@ const VIBES: Vibe[] = [
     id: "wild",
     label: "Wild",
     tagline: "Go big, sleep later",
+    photo: wildPhoto,
     stops: [
       {
         slot: "Morning",
@@ -231,6 +240,11 @@ function Index() {
                     active ? "glass ring-1 ring-sky/40" : "glass-dim hover:glass"
                   }`}
                 >
+                  <img
+                    src={v.photo}
+                    alt=""
+                    className="mx-auto mb-1.5 block size-9 rounded-full object-cover ring-1 ring-black/10"
+                  />
                   <span className="block font-display text-[13px] font-semibold text-ink">
                     {v.label}
                   </span>
@@ -260,6 +274,14 @@ function Index() {
             <p className="text-[10px] tracking-[0.2em] text-ink-soft/70 uppercase">
               {vibe.tagline}
             </p>
+          </div>
+
+          <div className="mt-3 overflow-hidden rounded-[14px] ring-1 ring-black/10">
+            <img
+              src={vibe.photo}
+              alt={`Friends enjoying a ${vibe.label.toLowerCase()} Austin weekend`}
+              className="h-40 w-full object-cover"
+            />
           </div>
 
           <div className="mt-3">
