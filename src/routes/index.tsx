@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { QRCodeCanvas } from "qrcode.react";
 import chillPhoto from "../assets/chill-vibe.jpg";
 import wildPhoto from "../assets/wild-vibe.jpg";
 import socialPhotoAsset from "../assets/social-vibe.jpg.asset.json";
@@ -177,6 +178,12 @@ function Index() {
   const [aiError, setAiError] = useState<string | null>(null);
   const [customText, setCustomText] = useState("");
   const [custom, setCustom] = useState<{ label: string; stops: Stop[] } | null>(null);
+  const [pass, setPass] = useState<{
+    orderId: string;
+    label: string;
+    stops: Stop[];
+    total: number;
+  } | null>(null);
   const requestId = useRef(0);
 
   useEffect(() => {
