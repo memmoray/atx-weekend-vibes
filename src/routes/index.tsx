@@ -173,23 +173,17 @@ function weekendLabel(): string {
 
 function Index() {
   const [vibeId, setVibeId] = useState<Vibe["id"]>("chill");
-  const [checkout, setCheckout] = useState<"idle" | "processing" | "done">(
-    "idle",
-  );
+  const [paid, setPaid] = useState(false);
   const [weekend, setWeekend] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setWeekend(weekendLabel());
+    setMounted(true);
   }, []);
 
   const vibe = VIBES.find((v) => v.id === vibeId) as Vibe;
   const total = vibe.stops.reduce((sum, stop) => sum + stop.price, 0);
-
-  const handleCheckout = () => {
-    if (checkout !== "idle") return;
-    setCheckout("processing");
-    window.setTimeout(() => setCheckout("done"), 1400);
-  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-ink font-body text-ink">
