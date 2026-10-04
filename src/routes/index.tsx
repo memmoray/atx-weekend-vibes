@@ -514,7 +514,9 @@ function Index() {
                         intent: "CAPTURE",
                         purchase_units: [
                           {
-                            description: `ATX Weekend Pass — ${vibe.label} vibe (${selectedStops.length} stop${selectedStops.length === 1 ? "" : "s"})`,
+                          description: `ATX Weekend Pass — ${
+                            custom ? custom.label : `${vibe.label} vibe`
+                          } (${selectedStops.length} stop${selectedStops.length === 1 ? "" : "s"})`,
                             amount: {
                               currency_code: "USD",
                               value: total.toFixed(2),
