@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import chillPhoto from "../assets/chill-vibe.jpg";
 import wildPhoto from "../assets/wild-vibe.jpg";
@@ -172,13 +172,18 @@ function Index() {
   const [weekend, setWeekend] = useState("");
   const [mounted, setMounted] = useState(false);
   const [excluded, setExcluded] = useState<Slot[]>([]);
+  const [aiStops, setAiStops] = useState<Partial<Record<Vibe["id"], Stop[]>>>({});
+  const [loading, setLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const requestId = useRef(0);
 
   useEffect(() => {
     setWeekend(weekendLabel());
     setMounted(true);
   }, []);
 
-  const vibe = VIBES.find((v) => v.id === vibeId) as Vibe;
+  const baseVibe = VIBES.find((v) => v.id === vibeId) as Vibe;
+  const vibe: Vibe = { ...baseVibe, stops: aiStops[vibeId] ?? baseVibe.stops };
   const selectedStops = vibe.stops.filter((s) => !excluded.includes(s.slot));
   const total = selectedStops.reduce((sum, stop) => sum + stop.price, 0);
 
@@ -189,10 +194,36 @@ function Index() {
     );
   };
 
+  const generate = async (id: Vibe["id"]) => {
+    const myId = ++requestId.current;
+    setLoading(true);
+    setAiError(null);
+    try {
+      const label = VIBES.find((v) => v.id === id)!.label;
+      const res = await fetch("/api/generate-itinerary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vibe: label }),
+      });
+      const json = await res.json();
+      if (myId !== requestId.current) return;
+      if (!res.ok) throw new Error(json.error ?? "Couldn't generate an itinerary.");
+      setAiStops((prev) => ({ ...prev, [id]: json.stops as Stop[] }));
+      setExcluded([]);
+      setPaid(false);
+    } catch (e) {
+      if (myId === requestId.current)
+        setAiError(e instanceof Error ? e.message : "Couldn't generate an itinerary.");
+    } finally {
+      if (myId === requestId.current) setLoading(false);
+    }
+  };
+
   const swapVibe = (id: Vibe["id"]) => {
     setVibeId(id);
     setPaid(false);
     setExcluded([]);
+    void generate(id);
   };
 
   return (
