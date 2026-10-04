@@ -348,7 +348,7 @@ function Index() {
               <div className="glass-dim ml-auto rounded-xl px-3 py-2 text-right">
                 <p className="text-[10px] text-ink-soft/70">per weekend</p>
                 <p className="mt-0.5 font-display text-[12px] font-semibold text-ink-soft">
-                  all 3 stops
+                  all {selectedStops.length} stop{selectedStops.length === 1 ? "" : "s"}
                 </p>
               </div>
             </div>
