@@ -30,6 +30,15 @@ const ITINERARY_SCHEMA = {
   },
 };
 
+const RequestSchema = z
+  .object({
+    vibe: VibeSchema.optional(),
+    custom: z.string().trim().min(2).max(60).optional(),
+  })
+  .refine((d) => d.vibe !== undefined || d.custom !== undefined, {
+    message: "pass a 'vibe' ('Chill', 'Social', or 'Wild') or a 'custom' vibe phrase",
+  });
+
 const ResultSchema = z.object({
   vibe: VibeSchema,
   stops: z
@@ -82,13 +91,23 @@ export const Route = createFileRoute("/api/generate-itinerary")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const parsed = z.object({ vibe: VibeSchema }).safeParse(await request.json().catch(() => null));
+        const parsed = RequestSchema.safeParse(await request.json().catch(() => null));
         if (!parsed.success) {
-          return Response.json({ error: "vibe must be 'Chill', 'Social', or 'Wild'" }, { status: 400 });
+          return Response.json(
+            { error: "Pass a 'vibe' ('Chill', 'Social', or 'Wild') or a 'custom' vibe phrase (2-60 chars)." },
+            { status: 400 },
+          );
         }
-        const vibe = parsed.data.vibe;
+        const { vibe, custom } = parsed.data;
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) return Response.json({ error: "AI is not configured" }, { status: 500 });
+
+        const rules =
+          "Use real, well-known Austin venues. Return exactly 3 stops in order: Morning, Afternoon, Night. Times like '9:00 AM'. 'detail' is a short lowercase phrase (max 5 words). 'price' is a whole-dollar micro-pass price between 8 and 75. 'total' is the exact sum of the 3 prices. Vary the picks each time.";
+        const instructions = custom
+          ? `You curate fun weekend itineraries in Austin, Texas for groups of friends. The user describes the vibe they want: "${custom}". Curate stops that genuinely fit that vibe. ${rules}`
+          : `You curate fun weekend itineraries in Austin, Texas for groups of friends. ${rules}`;
+        const prompt = `Vibe: ${custom ?? vibe}. Create the itinerary.`;
 
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
           method: "POST",
@@ -103,9 +122,8 @@ export const Route = createFileRoute("/api/generate-itinerary")({
             stream: true,
             store: false,
             reasoning: { effort: "low" },
-            instructions:
-              "You curate fun weekend itineraries in Austin, Texas for groups of friends. Use real, well-known Austin venues. Return exactly 3 stops in order: Morning, Afternoon, Night. Times like '9:00 AM'. 'detail' is a short lowercase phrase (max 5 words). 'price' is a whole-dollar micro-pass price between 8 and 75. 'total' is the exact sum of the 3 prices. Vary the picks each time.",
-            input: `Vibe: ${vibe}. Create the itinerary.`,
+            instructions,
+            input: prompt,
             text: {
               format: { type: "json_schema", name: "itinerary", strict: true, schema: ITINERARY_SCHEMA },
             },
