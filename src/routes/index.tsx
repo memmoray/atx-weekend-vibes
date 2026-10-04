@@ -169,7 +169,7 @@ function weekendLabel(): string {
 
 function Index() {
   const [vibeId, setVibeId] = useState<Vibe["id"]>("chill");
-  const [paid, setPaid] = useState(true); // TEMP-VERIFY
+  const [paid, setPaid] = useState(false);
   const [weekend, setWeekend] = useState("");
   const [mounted, setMounted] = useState(false);
   const [excluded, setExcluded] = useState<Slot[]>([]);
@@ -183,15 +183,7 @@ function Index() {
     label: string;
     stops: Stop[];
     total: number;
-  } | null>(
-    // TEMP-VERIFY
-    {
-      orderId: "TESTORDER123456",
-      label: "Chill vibe",
-      stops: VIBES[0]!.stops,
-      total: 76,
-    },
-  );
+  } | null>(null);
   const requestId = useRef(0);
 
   useEffect(() => {
