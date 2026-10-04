@@ -1,11 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  PayPalScriptProvider,
-  PayPalButtons,
-  type OnApproveData,
-  type OnApproveActions,
-} from "@paypal/react-paypal-js";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import chillPhoto from "../assets/chill-vibe.jpg";
 import wildPhoto from "../assets/wild-vibe.jpg";
 import socialPhotoAsset from "../assets/social-vibe.jpg.asset.json";
@@ -373,10 +368,7 @@ function Index() {
                         ],
                       })
                     }
-                    onApprove={async (
-                      _data: OnApproveData,
-                      actions: OnApproveActions,
-                    ) => {
+                    onApprove={async (_data, actions) => {
                       await actions.order?.capture();
                       setPaid(true);
                     }}
