@@ -1,10 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import {
+  PayPalScriptProvider,
+  PayPalButtons,
+  type OnApproveData,
+  type OnApproveActions,
+} from "@paypal/react-paypal-js";
 import chillPhoto from "../assets/chill-vibe.jpg";
 import wildPhoto from "../assets/wild-vibe.jpg";
 import socialPhotoAsset from "../assets/social-vibe.jpg.asset.json";
 
 const socialPhoto = socialPhotoAsset.url;
+
+const PAYPAL_CLIENT_ID =
+  "BAAaHSFWndANttbM7entvAqqDBPkt9i0IzTYzdMPQZykv610K_J0wE1YbkPnxnzrJq4pH7rEiTvuV1yBq8";
 
 export const Route = createFileRoute("/")({
   head: () => ({
