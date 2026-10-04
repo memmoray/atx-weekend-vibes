@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import chillPhoto from "../assets/chill-vibe.jpg";
+import wildPhoto from "../assets/wild-vibe.jpg";
+import socialPhotoAsset from "../assets/social-vibe.jpg.asset.json";
+
+const socialPhoto = socialPhotoAsset.url;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,6 +45,7 @@ type Vibe = {
   id: "chill" | "social" | "wild";
   label: string;
   tagline: string;
+  photo: string;
   stops: Stop[];
 };
 
