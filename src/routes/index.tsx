@@ -314,72 +314,105 @@ function Index() {
               </div>
             ))}
           </div>
-        </main>
 
-        {/* Total callout */}
-        <div className="glass rise mt-4 flex items-center gap-3 rounded-2xl p-4">
-          <div className="leading-none">
-            <p className="text-[10px] tracking-[0.18em] text-ink-soft/70 uppercase">
-              Total
-            </p>
-            <p className="mt-1.5 font-display text-[26px] font-semibold tracking-tight text-ink">
-              ${total}
-            </p>
-          </div>
-          <div className="glass-dim ml-auto rounded-xl px-3 py-2 text-right">
-            <p className="text-[10px] text-ink-soft/70">per weekend</p>
-            <p className="mt-0.5 font-display text-[12px] font-semibold text-ink-soft">
-              all 3 stops
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Sticky checkout bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-4">
-        <div className="glass w-full max-w-md rounded-[18px] p-2.5">
-          {checkout === "done" ? (
-            <div
-              className="rise flex items-center justify-center gap-2 rounded-xl bg-mint/20 py-3 ring-1 ring-mint/40"
-              role="status"
-            >
-              <span className="grid size-5 place-items-center rounded-full bg-mint text-[11px] font-bold text-ink">
-                ✓
-              </span>
-              <span className="text-[14px] font-semibold text-ink">
-                Pass secured — see you in Austin
-              </span>
+          {/* Total + PayPal checkout */}
+          <div className="mt-3 border-t border-ink/10 pt-3">
+            <div className="flex items-center gap-3">
+              <div className="leading-none">
+                <p className="text-[10px] tracking-[0.18em] text-ink-soft/70 uppercase">
+                  Total
+                </p>
+                <p className="mt-1.5 font-display text-[26px] font-semibold tracking-tight text-ink">
+                  ${total}
+                </p>
+              </div>
+              <div className="glass-dim ml-auto rounded-xl px-3 py-2 text-right">
+                <p className="text-[10px] text-ink-soft/70">per weekend</p>
+                <p className="mt-0.5 font-display text-[12px] font-semibold text-ink-soft">
+                  all 3 stops
+                </p>
+              </div>
             </div>
-          ) : (
-            <button
-              type="button"
-              onClick={handleCheckout}
-              disabled={checkout === "processing"}
-              className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-paypal py-2.5 text-[15px] font-semibold text-paypal-ink ring-1 ring-black/10 transition-opacity hover:opacity-90 disabled:opacity-70"
-            >
-              {checkout === "processing" ? (
-                <span className="font-medium">Connecting to PayPal…</span>
-              ) : (
-                <>
-                  <span className="font-display tracking-tight">
-                    Pay<span className="italic">Pal</span>
-                  </span>
-                  <span className="text-[13px] font-medium">· ${total}</span>
-                </>
-              )}
-            </button>
-          )}
-          {checkout === "done" && (
-            <button
-              type="button"
-              onClick={() => setCheckout("idle")}
-              className="mt-2 w-full text-center text-[11px] font-medium tracking-[0.18em] text-ink-soft/70 uppercase hover:text-ink-soft"
-            >
-              Buy another pass
-            </button>
-          )}
-        </div>
+
+            {paid ? (
+              <div
+                className="rise mt-3 flex items-center justify-center gap-2 rounded-xl bg-mint/20 py-3 ring-1 ring-mint/40"
+                role="status"
+              >
+                <span className="grid size-5 place-items-center rounded-full bg-mint text-[11px] font-bold text-ink">
+                  ✓
+                </span>
+                <span className="text-[14px] font-semibold text-ink">
+                  Pass secured — see you in Austin
+                </span>
+              </div>
+            ) : (
+              mounted && (
+                <div className="mt-3">
+                  <PayPalButtons
+                    key={vibe.id}
+                    forceReRender={[total, vibe.id]}
+                    style={{
+                      layout: "vertical",
+                      color: "gold",
+                      shape: "pill",
+                      label: "paypal",
+                      height: 45,
+                    }}
+                    createOrder={(_data, actions) =>
+                      actions.order.create({
+                        intent: "CAPTURE",
+                        purchase_units: [
+                          {
+                            description: `ATX Weekend Pass — ${vibe.label} vibe (${vibe.stops.length} stops)`,
+                            amount: {
+                              currency_code: "USD",
+                              value: total.toFixed(2),
+                            },
+                          },
+                        ],
+                      })
+                    }
+                    onApprove={async (
+                      _data: OnApproveData,
+                      actions: OnApproveActions,
+                    ) => {
+                      await actions.order?.capture();
+                      setPaid(true);
+                    }}
+                  />
+                  <p className="mt-2 text-center text-[10px] tracking-[0.18em] text-ink-soft/60 uppercase">
+                    Secure sandbox checkout via PayPal
+                  </p>
+                </div>
+              )
+            )}
+            {paid && (
+              <button
+                type="button"
+                onClick={() => setPaid(false)}
+                className="mt-2 w-full text-center text-[11px] font-medium tracking-[0.18em] text-ink-soft/70 uppercase hover:text-ink-soft"
+              >
+                Buy another pass
+              </button>
+            )}
+          </div>
+        </main>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <PayPalScriptProvider
+      options={{
+        clientId: PAYPAL_CLIENT_ID,
+        currency: "USD",
+        intent: "capture",
+      }}
+    >
+      <Index />
+    </PayPalScriptProvider>
   );
 }
