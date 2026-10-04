@@ -164,7 +164,7 @@ function Index() {
     setWeekend(weekendLabel());
   }, []);
 
-  const vibe = VIBES.find((v) => v.id === vibeId) ?? VIBES[0];
+  const vibe = VIBES.find((v) => v.id === vibeId) as Vibe;
   const total = vibe.stops.reduce((sum, stop) => sum + stop.price, 0);
 
   const handleCheckout = () => {
