@@ -377,6 +377,7 @@ function Index() {
               Mix it
             </button>
           </form>
+        </div>
 
         {/* Itinerary card */}
         <main
