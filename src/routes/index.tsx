@@ -37,7 +37,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
+  component: App,
 });
 
 type Slot = "Morning" | "Afternoon" | "Night";
@@ -201,7 +201,7 @@ function Index() {
         className="pointer-events-none absolute -bottom-28 left-1/3 size-[54vw] rounded-full bg-coral/30 blur-[90px]"
       />
 
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-4 pt-6 pb-32">
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-4 pt-6 pb-10">
         {/* Header */}
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="flex min-w-0 items-center gap-2.5">
