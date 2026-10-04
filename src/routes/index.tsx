@@ -365,6 +365,15 @@ function Index() {
                   Pass secured — see you in Austin
                 </span>
               </div>
+            ) : total === 0 ? (
+              <div
+                className="mt-3 rounded-xl bg-coral/15 py-3 text-center ring-1 ring-coral/40"
+                role="status"
+              >
+                <span className="text-[13px] font-medium text-ink">
+                  Pick at least one stop to check out
+                </span>
+              </div>
             ) : (
               total > 0 && mounted && (
                 <div className="mt-3">
