@@ -183,7 +183,16 @@ function Index() {
     label: string;
     stops: Stop[];
     total: number;
-  } | null>(null);
+  } | null>(
+    // TEMP-VERIFY
+    {
+      orderId: "TESTORDER123456",
+      label: "Chill vibe",
+      stops: VIBES[0]!.stops,
+      total: 76,
+    },
+  );
+  const [paid0] = useState(true); // TEMP-VERIFY
   const requestId = useRef(0);
 
   useEffect(() => {
