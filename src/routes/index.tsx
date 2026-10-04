@@ -573,19 +573,7 @@ function Index() {
               </div>
             </div>
 
-            {paid ? (
-              <div
-                className="rise mt-3 flex items-center justify-center gap-2 rounded-xl bg-mint/20 py-3 ring-1 ring-mint/40"
-                role="status"
-              >
-                <span className="grid size-5 place-items-center rounded-full bg-mint text-[11px] font-bold text-ink">
-                  ✓
-                </span>
-                <span className="text-[14px] font-semibold text-ink">
-                  Pass secured — see you in Austin
-                </span>
-              </div>
-            ) : total === 0 ? (
+            {total === 0 ? (
               <div
                 className="mt-3 rounded-xl bg-coral/15 py-3 text-center ring-1 ring-coral/40"
                 role="status"
@@ -640,17 +628,9 @@ function Index() {
                 </div>
               )
             )}
-            {paid && (
-              <button
-                type="button"
-                onClick={() => setPaid(false)}
-                className="mt-2 w-full text-center text-[11px] font-medium tracking-[0.18em] text-ink-soft/70 uppercase hover:text-ink-soft"
-              >
-                Buy another pass
-              </button>
-            )}
           </div>
         </main>
+        )}
       </div>
     </div>
   );
