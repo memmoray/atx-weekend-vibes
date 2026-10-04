@@ -192,7 +192,6 @@ function Index() {
       total: 76,
     },
   );
-  const [paid0] = useState(true); // TEMP-VERIFY
   const requestId = useRef(0);
 
   useEffect(() => {
