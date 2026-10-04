@@ -169,7 +169,7 @@ function weekendLabel(): string {
 
 function Index() {
   const [vibeId, setVibeId] = useState<Vibe["id"]>("chill");
-  const [paid, setPaid] = useState(false);
+  const [paid, setPaid] = useState(true); // TEMP-VERIFY
   const [weekend, setWeekend] = useState("");
   const [mounted, setMounted] = useState(false);
   const [excluded, setExcluded] = useState<Slot[]>([]);
