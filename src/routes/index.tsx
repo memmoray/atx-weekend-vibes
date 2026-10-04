@@ -237,7 +237,7 @@ function Index() {
                   aria-pressed={active}
                   onClick={() => {
                     setVibeId(v.id);
-                    setCheckout("idle");
+                    setPaid(false);
                   }}
                   className={`rounded-[14px] px-2 py-2.5 text-center transition-all duration-200 ${
                     active ? "glass ring-1 ring-sky/40" : "glass-dim hover:glass"
