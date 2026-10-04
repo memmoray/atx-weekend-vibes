@@ -392,6 +392,11 @@ function Index() {
               {vibe.tagline}
             </p>
           </div>
+          {custom && (
+            <p className="mt-1.5 truncate text-[12px] font-medium text-sky-deep">
+              “{custom.label}”
+            </p>
+          )}
 
           <div className="mt-3 overflow-hidden rounded-[14px] ring-1 ring-black/10">
             <img
