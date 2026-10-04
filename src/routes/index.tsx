@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { QRCodeCanvas } from "qrcode.react";
 import chillPhoto from "../assets/chill-vibe.jpg";
 import wildPhoto from "../assets/wild-vibe.jpg";
 import socialPhotoAsset from "../assets/social-vibe.jpg.asset.json";
@@ -177,6 +178,12 @@ function Index() {
   const [aiError, setAiError] = useState<string | null>(null);
   const [customText, setCustomText] = useState("");
   const [custom, setCustom] = useState<{ label: string; stops: Stop[] } | null>(null);
+  const [pass, setPass] = useState<{
+    orderId: string;
+    label: string;
+    stops: Stop[];
+    total: number;
+  } | null>(null);
   const requestId = useRef(0);
 
   useEffect(() => {
@@ -379,7 +386,97 @@ function Index() {
           </form>
         </div>
 
-        {/* Itinerary card */}
+        {/* Digital pass confirmation */}
+        {paid && pass ? (
+          <main className="glass rise mt-5 rounded-2xl p-5 text-center" aria-label="Digital pass">
+            <div className="mx-auto grid size-12 place-items-center rounded-full bg-mint/25 ring-1 ring-mint/40">
+              <span className="grid size-7 place-items-center rounded-full bg-mint text-[15px] font-bold text-ink">
+                ✓
+              </span>
+            </div>
+            <h1 className="mt-3 font-display text-[20px] font-semibold tracking-tight text-ink">
+              You're all set for ATX Weekend!
+            </h1>
+            <p className="mt-1 text-[12px] text-ink-soft/70">
+              {pass.label} · {weekend}
+            </p>
+
+            <div className="mx-auto mt-4 w-fit rounded-2xl bg-cream p-3 ring-1 ring-black/10">
+              <QRCodeCanvas
+                value={`ATX-PASS|${pass.orderId}|${pass.label}|$${pass.total.toFixed(2)}`}
+                size={160}
+                bgColor="#FFF8EE"
+                fgColor="#1B2432"
+                level="M"
+              />
+            </div>
+            <p className="mt-2 text-[10px] tracking-[0.18em] text-ink-soft/60 uppercase">
+              Order {pass.orderId.slice(0, 12)}
+            </p>
+
+            <div className="mt-4 rounded-xl bg-ink/5 p-3 text-left ring-1 ring-ink/10">
+              {pass.stops.map((stop) => (
+                <div
+                  key={stop.slot}
+                  className="flex items-center gap-2 border-b border-ink/10 py-2 last:border-0"
+                >
+                  <span
+                    className={`size-2 shrink-0 rounded-full ${SLOT_RING[stop.slot]}`}
+                    aria-hidden="true"
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate font-display text-[13px] font-semibold text-ink">
+                      {stop.name}
+                    </p>
+                    <p className="text-[11px] text-ink-soft/70">
+                      {stop.slot} · {stop.time}
+                    </p>
+                  </div>
+                  <span className="ml-auto font-display text-[13px] font-semibold text-ink">
+                    ${stop.price}
+                  </span>
+                </div>
+              ))}
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-[10px] tracking-[0.18em] text-ink-soft/70 uppercase">
+                  Total paid
+                </span>
+                <span className="font-display text-[17px] font-semibold text-ink">
+                  ${pass.total.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const canvas = document.querySelector<HTMLCanvasElement>(
+                    "main[aria-label='Digital pass'] canvas",
+                  );
+                  if (!canvas) return;
+                  const a = document.createElement("a");
+                  a.href = canvas.toDataURL("image/png");
+                  a.download = `atx-weekend-pass-${pass.orderId}.png`;
+                  a.click();
+                }}
+                className="rounded-full bg-ink py-2.5 font-display text-[12px] font-semibold tracking-tight text-cream ring-1 ring-black/10"
+              >
+                Download Pass
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPaid(false);
+                  setPass(null);
+                }}
+                className="glass-dim rounded-full py-2.5 font-display text-[12px] font-semibold tracking-tight text-ink"
+              >
+                Back to Itinerary
+              </button>
+            </div>
+          </main>
+        ) : (
         <main
           key={vibe.id}
           className="glass rise mt-4 rounded-2xl p-4"
@@ -476,19 +573,7 @@ function Index() {
               </div>
             </div>
 
-            {paid ? (
-              <div
-                className="rise mt-3 flex items-center justify-center gap-2 rounded-xl bg-mint/20 py-3 ring-1 ring-mint/40"
-                role="status"
-              >
-                <span className="grid size-5 place-items-center rounded-full bg-mint text-[11px] font-bold text-ink">
-                  ✓
-                </span>
-                <span className="text-[14px] font-semibold text-ink">
-                  Pass secured — see you in Austin
-                </span>
-              </div>
-            ) : total === 0 ? (
+            {total === 0 ? (
               <div
                 className="mt-3 rounded-xl bg-coral/15 py-3 text-center ring-1 ring-coral/40"
                 role="status"
@@ -526,8 +611,14 @@ function Index() {
                         ],
                       })
                     }
-                    onApprove={async (_data, actions) => {
+                    onApprove={async (data, actions) => {
                       await actions.order?.capture();
+                      setPass({
+                        orderId: data.orderID,
+                        label: custom ? custom.label : `${vibe.label} vibe`,
+                        stops: selectedStops,
+                        total,
+                      });
                       setPaid(true);
                     }}
                   />
@@ -537,17 +628,9 @@ function Index() {
                 </div>
               )
             )}
-            {paid && (
-              <button
-                type="button"
-                onClick={() => setPaid(false)}
-                className="mt-2 w-full text-center text-[11px] font-medium tracking-[0.18em] text-ink-soft/70 uppercase hover:text-ink-soft"
-              >
-                Buy another pass
-              </button>
-            )}
           </div>
         </main>
+        )}
       </div>
     </div>
   );
