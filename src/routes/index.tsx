@@ -325,7 +325,17 @@ function Index() {
             />
           </div>
 
-          <div className="mt-3">
+          {loading && (
+            <p role="status" className="mt-3 animate-pulse rounded-xl bg-sky/15 py-2 text-center text-[12px] font-medium text-ink">
+              Curating fresh {vibe.label.toLowerCase()} stops…
+            </p>
+          )}
+          {aiError && !loading && (
+            <p role="alert" className="mt-3 rounded-xl bg-coral/15 py-2 text-center text-[12px] font-medium text-ink">
+              {aiError}
+            </p>
+          )}
+          <div className={`mt-3 transition-opacity ${loading ? "pointer-events-none opacity-40" : ""}`}>
             {vibe.stops.map((stop, i) => {
               const off = excluded.includes(stop.slot);
               return (
