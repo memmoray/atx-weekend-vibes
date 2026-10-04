@@ -171,6 +171,7 @@ function Index() {
   const [paid, setPaid] = useState(false);
   const [weekend, setWeekend] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [excluded, setExcluded] = useState<Slot[]>([]);
 
   useEffect(() => {
     setWeekend(weekendLabel());
@@ -178,7 +179,21 @@ function Index() {
   }, []);
 
   const vibe = VIBES.find((v) => v.id === vibeId) as Vibe;
-  const total = vibe.stops.reduce((sum, stop) => sum + stop.price, 0);
+  const selectedStops = vibe.stops.filter((s) => !excluded.includes(s.slot));
+  const total = selectedStops.reduce((sum, stop) => sum + stop.price, 0);
+
+  const toggleStop = (slot: Slot) => {
+    setPaid(false);
+    setExcluded((prev) =>
+      prev.includes(slot) ? prev.filter((s) => s !== slot) : [...prev, slot],
+    );
+  };
+
+  const swapVibe = (id: Vibe["id"]) => {
+    setVibeId(id);
+    setPaid(false);
+    setExcluded([]);
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-ink font-body text-ink">
