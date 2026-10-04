@@ -54,6 +54,7 @@ const VIBES: Vibe[] = [
     id: "chill",
     label: "Chill",
     tagline: "Slow mornings, soft landings",
+    photo: chillPhoto,
     stops: [
       {
         slot: "Morning",
@@ -82,6 +83,7 @@ const VIBES: Vibe[] = [
     id: "social",
     label: "Social",
     tagline: "Patios, music, people",
+    photo: socialPhoto,
     stops: [
       {
         slot: "Morning",
@@ -110,6 +112,7 @@ const VIBES: Vibe[] = [
     id: "wild",
     label: "Wild",
     tagline: "Go big, sleep later",
+    photo: wildPhoto,
     stops: [
       {
         slot: "Morning",
