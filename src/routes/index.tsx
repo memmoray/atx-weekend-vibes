@@ -240,6 +240,11 @@ function Index() {
                     active ? "glass ring-1 ring-sky/40" : "glass-dim hover:glass"
                   }`}
                 >
+                  <img
+                    src={v.photo}
+                    alt=""
+                    className="mx-auto mb-1.5 block size-9 rounded-full object-cover ring-1 ring-black/10"
+                  />
                   <span className="block font-display text-[13px] font-semibold text-ink">
                     {v.label}
                   </span>
@@ -269,6 +274,14 @@ function Index() {
             <p className="text-[10px] tracking-[0.2em] text-ink-soft/70 uppercase">
               {vibe.tagline}
             </p>
+          </div>
+
+          <div className="mt-3 overflow-hidden rounded-[14px] ring-1 ring-black/10">
+            <img
+              src={vibe.photo}
+              alt={`Friends enjoying a ${vibe.label.toLowerCase()} Austin weekend`}
+              className="h-40 w-full object-cover"
+            />
           </div>
 
           <div className="mt-3">
