@@ -366,7 +366,7 @@ function Index() {
                 </span>
               </div>
             ) : (
-              mounted && (
+              total > 0 && mounted && (
                 <div className="mt-3">
                   <PayPalButtons
                     key={vibe.id}
