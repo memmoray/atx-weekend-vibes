@@ -178,15 +178,15 @@ function Index() {
       {/* Ambient glows */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -left-24 size-[62vw] rounded-full bg-sky/40 blur-[90px]"
+        className="pointer-events-none absolute -top-24 -left-24 size-[62vw] rounded-full bg-sky/50 blur-[90px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-20 top-44 size-[52vw] rounded-full bg-mint/25 blur-[90px]"
+        className="pointer-events-none absolute -right-20 top-44 size-[52vw] rounded-full bg-mint/30 blur-[90px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-28 left-1/3 size-[54vw] rounded-full bg-coral/25 blur-[90px]"
+        className="pointer-events-none absolute -bottom-28 left-1/3 size-[54vw] rounded-full bg-coral/30 blur-[90px]"
       />
 
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-4 pt-6 pb-32">
@@ -197,10 +197,10 @@ function Index() {
               ATX
             </span>
             <div className="min-w-0 leading-none">
-              <p className="truncate font-display text-[13px] font-semibold tracking-tight text-ink-soft">
+              <p className="truncate font-display text-[13px] font-semibold tracking-tight text-cream">
                 Weekend Pass
               </p>
-              <p className="mt-1 truncate text-[10px] tracking-[0.22em] text-ink-soft/70 uppercase">
+              <p className="mt-1 truncate text-[10px] tracking-[0.22em] text-cream/60 uppercase">
                 Austin{weekend ? ` · ${weekend}` : ""}
               </p>
             </div>
