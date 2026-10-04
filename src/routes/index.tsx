@@ -171,6 +171,7 @@ function Index() {
   const [paid, setPaid] = useState(false);
   const [weekend, setWeekend] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [excluded, setExcluded] = useState<Slot[]>([]);
 
   useEffect(() => {
     setWeekend(weekendLabel());
@@ -178,7 +179,21 @@ function Index() {
   }, []);
 
   const vibe = VIBES.find((v) => v.id === vibeId) as Vibe;
-  const total = vibe.stops.reduce((sum, stop) => sum + stop.price, 0);
+  const selectedStops = vibe.stops.filter((s) => !excluded.includes(s.slot));
+  const total = selectedStops.reduce((sum, stop) => sum + stop.price, 0);
+
+  const toggleStop = (slot: Slot) => {
+    setPaid(false);
+    setExcluded((prev) =>
+      prev.includes(slot) ? prev.filter((s) => s !== slot) : [...prev, slot],
+    );
+  };
+
+  const swapVibe = (id: Vibe["id"]) => {
+    setVibeId(id);
+    setPaid(false);
+    setExcluded([]);
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-ink font-body text-ink">
@@ -213,7 +228,7 @@ function Index() {
             </div>
           </div>
           <span className="glass-dim shrink-0 rounded-full px-3 py-1.5 text-[11px] font-medium text-ink-soft">
-            3 stops
+            {selectedStops.length} stop{selectedStops.length === 1 ? "" : "s"}
           </span>
         </header>
 
@@ -230,10 +245,7 @@ function Index() {
                   key={v.id}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => {
-                    setVibeId(v.id);
-                    setPaid(false);
-                  }}
+                  onClick={() => swapVibe(v.id)}
                   className={`rounded-[14px] px-2 py-2.5 text-center transition-all duration-200 ${
                     active ? "glass ring-1 ring-sky/40" : "glass-dim hover:glass"
                   }`}
@@ -283,31 +295,43 @@ function Index() {
           </div>
 
           <div className="mt-3">
-            {vibe.stops.map((stop, i) => (
-              <div
-                key={stop.slot}
-                className={`flex items-start gap-3 py-3 ${
-                  i > 0 ? "border-t border-ink/10" : ""
-                }`}
-              >
-                <div className="min-w-0 shrink-0 pt-0.5">
+            {vibe.stops.map((stop, i) => {
+              const off = excluded.includes(stop.slot);
+              return (
+                <button
+                  key={stop.slot}
+                  type="button"
+                  aria-pressed={!off}
+                  onClick={() => toggleStop(stop.slot)}
+                  className={`flex w-full items-start gap-3 rounded-xl px-2 py-3 text-left transition-all duration-200 hover:glass-dim ${
+                    i > 0 ? "border-t border-ink/10" : ""
+                  } ${off ? "opacity-40" : ""}`}
+                  aria-label={`${off ? "Add" : "Remove"} ${stop.name} (${stop.slot})`}
+                >
+                  <div className="min-w-0 shrink-0 pt-0.5">
+                    <span
+                      className={`inline-block rounded-full px-2 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase ${SLOT_CHIP[stop.slot]}`}
+                    >
+                      {stop.slot}
+                    </span>
+                    <p className={`mt-2 font-display text-[15px] leading-tight font-semibold text-ink ${off ? "line-through" : ""}`}>
+                      {stop.name}
+                    </p>
+                    <p className="mt-1 truncate text-[12px] text-ink-soft/70">
+                      {stop.time} · {stop.detail}
+                    </p>
+                  </div>
                   <span
-                    className={`inline-block rounded-full px-2 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase ${SLOT_CHIP[stop.slot]}`}
+                    className={`ml-auto self-center font-display text-[15px] font-semibold text-ink ${off ? "line-through" : ""}`}
                   >
-                    {stop.slot}
+                    ${stop.price}
                   </span>
-                  <p className="mt-2 font-display text-[15px] leading-tight font-semibold text-ink">
-                    {stop.name}
-                  </p>
-                  <p className="mt-1 truncate text-[12px] text-ink-soft/70">
-                    {stop.time} · {stop.detail}
-                  </p>
-                </div>
-                <span className="ml-auto self-center font-display text-[15px] font-semibold text-ink">
-                  ${stop.price}
-                </span>
-              </div>
-            ))}
+                </button>
+              );
+            })}
+            <p className="pt-1 text-center text-[10px] tracking-[0.14em] text-ink-soft/60 uppercase">
+              Tap a stop to add or remove it
+            </p>
           </div>
 
           {/* Total + PayPal checkout */}
@@ -324,7 +348,7 @@ function Index() {
               <div className="glass-dim ml-auto rounded-xl px-3 py-2 text-right">
                 <p className="text-[10px] text-ink-soft/70">per weekend</p>
                 <p className="mt-0.5 font-display text-[12px] font-semibold text-ink-soft">
-                  all 3 stops
+                  all {selectedStops.length} stop{selectedStops.length === 1 ? "" : "s"}
                 </p>
               </div>
             </div>
@@ -341,8 +365,17 @@ function Index() {
                   Pass secured — see you in Austin
                 </span>
               </div>
+            ) : total === 0 ? (
+              <div
+                className="mt-3 rounded-xl bg-coral/15 py-3 text-center ring-1 ring-coral/40"
+                role="status"
+              >
+                <span className="text-[13px] font-medium text-ink">
+                  Pick at least one stop to check out
+                </span>
+              </div>
             ) : (
-              mounted && (
+              total > 0 && mounted && (
                 <div className="mt-3">
                   <PayPalButtons
                     key={vibe.id}
@@ -359,7 +392,7 @@ function Index() {
                         intent: "CAPTURE",
                         purchase_units: [
                           {
-                            description: `ATX Weekend Pass — ${vibe.label} vibe (${vibe.stops.length} stops)`,
+                            description: `ATX Weekend Pass — ${vibe.label} vibe (${selectedStops.length} stop${selectedStops.length === 1 ? "" : "s"})`,
                             amount: {
                               currency_code: "USD",
                               value: total.toFixed(2),
