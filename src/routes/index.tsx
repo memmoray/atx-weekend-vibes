@@ -295,31 +295,43 @@ function Index() {
           </div>
 
           <div className="mt-3">
-            {vibe.stops.map((stop, i) => (
-              <div
-                key={stop.slot}
-                className={`flex items-start gap-3 py-3 ${
-                  i > 0 ? "border-t border-ink/10" : ""
-                }`}
-              >
-                <div className="min-w-0 shrink-0 pt-0.5">
+            {vibe.stops.map((stop, i) => {
+              const off = excluded.includes(stop.slot);
+              return (
+                <button
+                  key={stop.slot}
+                  type="button"
+                  aria-pressed={!off}
+                  onClick={() => toggleStop(stop.slot)}
+                  className={`flex w-full items-start gap-3 rounded-xl px-2 py-3 text-left transition-all duration-200 hover:glass-dim ${
+                    i > 0 ? "border-t border-ink/10" : ""
+                  } ${off ? "opacity-40" : ""}`}
+                  aria-label={`${off ? "Add" : "Remove"} ${stop.name} (${stop.slot})`}
+                >
+                  <div className="min-w-0 shrink-0 pt-0.5">
+                    <span
+                      className={`inline-block rounded-full px-2 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase ${SLOT_CHIP[stop.slot]}`}
+                    >
+                      {stop.slot}
+                    </span>
+                    <p className={`mt-2 font-display text-[15px] leading-tight font-semibold text-ink ${off ? "line-through" : ""}`}>
+                      {stop.name}
+                    </p>
+                    <p className="mt-1 truncate text-[12px] text-ink-soft/70">
+                      {stop.time} · {stop.detail}
+                    </p>
+                  </div>
                   <span
-                    className={`inline-block rounded-full px-2 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase ${SLOT_CHIP[stop.slot]}`}
+                    className={`ml-auto self-center font-display text-[15px] font-semibold text-ink ${off ? "line-through" : ""}`}
                   >
-                    {stop.slot}
+                    ${stop.price}
                   </span>
-                  <p className="mt-2 font-display text-[15px] leading-tight font-semibold text-ink">
-                    {stop.name}
-                  </p>
-                  <p className="mt-1 truncate text-[12px] text-ink-soft/70">
-                    {stop.time} · {stop.detail}
-                  </p>
-                </div>
-                <span className="ml-auto self-center font-display text-[15px] font-semibold text-ink">
-                  ${stop.price}
-                </span>
-              </div>
-            ))}
+                </button>
+              );
+            })}
+            <p className="pt-1 text-center text-[10px] tracking-[0.14em] text-ink-soft/60 uppercase">
+              Tap a stop to add or remove it
+            </p>
           </div>
 
           {/* Total + PayPal checkout */}
