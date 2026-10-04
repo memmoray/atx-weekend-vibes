@@ -533,8 +533,14 @@ function Index() {
                         ],
                       })
                     }
-                    onApprove={async (_data, actions) => {
+                    onApprove={async (data, actions) => {
                       await actions.order?.capture();
+                      setPass({
+                        orderId: data.orderID,
+                        label: custom ? custom.label : `${vibe.label} vibe`,
+                        stops: selectedStops,
+                        total,
+                      });
                       setPaid(true);
                     }}
                   />
