@@ -228,7 +228,7 @@ function Index() {
             </div>
           </div>
           <span className="glass-dim shrink-0 rounded-full px-3 py-1.5 text-[11px] font-medium text-ink-soft">
-            3 stops
+            {selectedStops.length} stop{selectedStops.length === 1 ? "" : "s"}
           </span>
         </header>
 
@@ -245,10 +245,7 @@ function Index() {
                   key={v.id}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => {
-                    setVibeId(v.id);
-                    setPaid(false);
-                  }}
+                  onClick={() => swapVibe(v.id)}
                   className={`rounded-[14px] px-2 py-2.5 text-center transition-all duration-200 ${
                     active ? "glass ring-1 ring-sky/40" : "glass-dim hover:glass"
                   }`}
