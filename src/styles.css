@@ -6,10 +6,8 @@
 
 /*
  * Design system — ATX Weekend Pass
- * Dark glass canvas with sky / mint / coral accents, Space Grotesk display
- * type over DM Sans body. Glass surfaces are @utility classes so every card
- * shares one treatment. All colors are oklch tokens — never hardcode colors
- * in components.
+ * Warm editorial canvas with coral, marigold, mint and lavender accents.
+ * All colors are semantic oklch tokens — never hardcode colors in components.
  */
 
 @theme inline {
@@ -50,46 +48,52 @@
   --color-cream: var(--cream);
   --color-paypal: var(--paypal);
   --color-paypal-ink: var(--paypal-ink);
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-sunrise: var(--sunrise);
+  --color-lavender: var(--lavender);
+  --color-mint-pale: var(--mint-pale);
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-editorial: "DM Serif Display", Georgia, serif;
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 0.75rem;
 
   /* Palette */
-  --ink: oklch(0.19 0.02 258);
-  --ink-soft: oklch(0.29 0.024 258);
-  --sky: oklch(0.66 0.16 265);
-  --sky-deep: oklch(0.55 0.2 271);
-  --mint: oklch(0.77 0.15 163);
-  --mint-deep: oklch(0.52 0.12 160);
-  --coral: oklch(0.72 0.16 42);
-  --coral-deep: oklch(0.56 0.19 35);
-  --cream: oklch(0.96 0.005 250);
-  --paypal: oklch(0.87 0.13 90);
+  --ink: oklch(0.23 0.025 155);
+  --ink-soft: oklch(0.45 0.018 155);
+  --sky: oklch(0.78 0.11 192);
+  --sky-deep: oklch(0.48 0.09 185);
+  --mint: oklch(0.78 0.1 170);
+  --mint-deep: oklch(0.48 0.09 175);
+  --mint-pale: oklch(0.92 0.055 179);
+  --coral: oklch(0.66 0.2 30);
+  --coral-deep: oklch(0.53 0.19 29);
+  --cream: oklch(0.98 0.018 86);
+  --sunrise: oklch(0.79 0.1 73);
+  --lavender: oklch(0.69 0.1 308);
+  --paypal: oklch(0.86 0.16 90);
   --paypal-ink: oklch(0.27 0.11 265);
 
-  /* Semantic mapping (dark glass theme is the only theme) */
-  --background: var(--ink);
-  --foreground: var(--cream);
-  --card: var(--ink-soft);
-  --card-foreground: var(--cream);
-  --popover: var(--ink-soft);
-  --popover-foreground: var(--cream);
-  --primary: var(--sky-deep);
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card: oklch(0.99 0.008 86);
+  --card-foreground: var(--ink);
+  --popover: var(--card);
+  --popover-foreground: var(--ink);
+  --primary: var(--coral);
   --primary-foreground: var(--cream);
-  --secondary: var(--ink-soft);
-  --secondary-foreground: var(--cream);
-  --muted: var(--ink-soft);
-  --muted-foreground: oklch(0.62 0.02 258);
-  --accent: var(--ink-soft);
-  --accent-foreground: var(--cream);
+  --secondary: var(--mint-pale);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.93 0.012 86);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--paypal);
+  --accent-foreground: var(--ink);
   --destructive: oklch(0.63 0.2 25);
   --destructive-foreground: var(--cream);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: var(--sky);
+  --border: oklch(0.78 0.018 86);
+  --input: var(--border);
+  --ring: var(--coral);
 }
 
 /* Glass surfaces — one shared treatment for every card */
