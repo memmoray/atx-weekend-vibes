@@ -1,26 +1,48 @@
-# ATX Weekend Vibe
+# 🤠 ATX Weekend Pass
 
-Create a clean mobile-first web app for 'ATX Weekend Pass'. Include 3 vibe-selection buttons at the top, a card showing 3 itinerary stops (Morning, Afternoon, Night) with prices, a total price callout, and a PayPal checkout button
+> An AI-powered weekend curator and payment app that turns group decision fatigue into a tailored 3-stop day pass across Austin with a unified PayPal checkout.
 
-This project was built with [Lovable](https://lovable.dev).
+Built for the **PayPal & AI Global Hackathon**.
 
-**Live app**: https://atx-weekend-vibes.lovable.app
+---
 
-## Build with Lovable
+## 🌟 Live Demo & Links
+* **Live App:** [https://atx-weekend-vibes.lovable.app](https://atx-weekend-vibes.lovable.app)
+* **Creator Channel:** `@BuildWithModesta`https://www.youtube.com/@BuildwithModesta
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/9f5b34df-d4c2-48aa-a4f7-0a6f5fbc1fc1).
+---
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## 💡 Inspiration
+Living in Austin, there’s always so much going on—from paddleboarding on Lady Bird Lake to live music—that figuring out what to do can get overwhelming, especially when trying to coordinate with a group of friends with totally different vibes. **ATX Weekend Pass** was created to make weekend planning effortless: an AI curator that builds a personalized 3-stop itinerary in seconds and lets you bundle and pay for the whole day in one seamless step.
 
-## Development
+---
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## ✨ Features
+* **AI Vibe Curation:** Select a vibe (*Chill*, *Classic*, *Go All Out*) or enter a custom prompt. The AI generates a customized 3-stop day pass (Morning, Afternoon, Night) with venue perks.
+* **Dynamic Pricing:** Automatically calculates the total pass amount based on the active itinerary.
+* **Unified PayPal Checkout:** Integrated PayPal React SDK allows users to pay for all three stops in a single transaction.
+* **Digital QR Pass:** Generates a unified digital pass with a QR code upon payment capture for easy venue entry.
 
-```sh
-git clone <this-repository-url>
+---
+
+## 🛠️ Tech Stack & Tools
+* **Frontend UI:** Designed in **Figma**, built with **Lovable** & **React**
+* **Deployment:** Hosted on **Lovable**
+* **AI Engine:** **OpenAI API (`gpt-4o-mini`)** for structured JSON itinerary generation
+* **Payments:** **`@paypal/react-paypal-js` SDK** (Orders & Capture API)
+
+---
+
+## 🚀 Development & Setup
+
+### Built with Lovable
+This project was developed using **Lovable** and synced directly to GitHub. 
+
+### Local Development
+If you prefer working locally, ensure you have Node.js and npm installed:
+
+```bash
+git clone <repository-url>
 cd <repository-name>
-npm i
+npm install
 npm run dev
-```
